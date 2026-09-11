@@ -1,0 +1,36 @@
+{
+  "name": "reviseo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reviseo — a personalised GCSE revision platform.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "16.3.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "@supabase/supabase-js": "2.116.0",
+    "@supabase/ssr": "0.12.7",
+    "lucide-react": "1.45.0",
+    "clsx": "2.1.1",
+    "tailwind-merge": "3.6.0",
+    "zod": "4.6.2"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2",
+    "@types/node": "22.10.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "tailwindcss": "4.3.3",
+    "@tailwindcss/postcss": "4.3.3",
+    "postcss": "8.4.49",
+    "eslint": "10.10.0",
+    "eslint-config-next": "16.3.4",
+    "@eslint/eslintrc": "3.2.0"
+  }
+}

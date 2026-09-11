@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* ---- Brand ---------------------------------------------------------- */
+  --color-brand: #4f46e5;
+  --color-brand-light: #818cf8;
+  --color-brand-dark: #3730a3;
+
+  /* ---- Surface / text --------------------------------------------------- */
+  --color-bg: #faf9ff;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f4f4fb;
+  --color-border: #e8e8f3;
+  --color-ink: #1e1b3a;
+  --color-ink-muted: #6b7093;
+
+  /* ---- Semantic ---------------------------------------------------------- */
+  --color-success: #16a34a;
+  --color-success-soft: #eafbf0;
+  --color-warning: #d97706;
+  --color-warning-soft: #fff7e5;
+  --color-danger: #dc2626;
+  --color-danger-soft: #fef1f1;
+  --color-info: #2563eb;
+  --color-info-soft: #eaf1fe;
+
+  /* ---- Gamification -------------------------------------------------- */
+  --color-flame: #ff6b35;
+  --color-flame-soft: #fff1ea;
+  --color-xp: #ffb800;
+  --color-xp-soft: #fff8e1;
+
+  /* ---- Subject identity ------------------------------------------------ */
+  --color-maths: #6366f1;
+  --color-maths-light: #a5b4fc;
+  --color-maths-soft: #eef0ff;
+
+  --color-english: #e11d48;
+  --color-english-light: #fb7185;
+  --color-english-soft: #fff1f3;
+
+  --color-biology: #16a34a;
+  --color-biology-light: #4ade80;
+  --color-biology-soft: #eafbf0;
+
+  --color-chemistry: #f97316;
+  --color-chemistry-light: #fdba74;
+  --color-chemistry-soft: #fff4e8;
+
+  --color-physics: #2563eb;
+  --color-physics-light: #60a5fa;
+  --color-physics-soft: #eaf1fe;
+
+  --color-science: #0891b2;
+  --color-science-light: #22d3ee;
+  --color-science-soft: #e6fafd;
+
+  --color-computer-science: #9333ea;
+  --color-computer-science-light: #c084fc;
+  --color-computer-science-soft: #f6eefe;
+
+  --color-geography: #0d9488;
+  --color-geography-light: #2dd4bf;
+  --color-geography-soft: #e7faf8;
+
+  --color-history: #d97706;
+  --color-history-light: #fbbf24;
+  --color-history-soft: #fff7e5;
+
+  --color-religious-studies: #7c3aed;
+  --color-religious-studies-light: #a78bfa;
+  --color-religious-studies-soft: #f3effe;
+
+  --color-business: #ca8a04;
+  --color-business-light: #fde047;
+  --color-business-soft: #fffbe6;
+
+  --color-languages: #db2777;
+  --color-languages-light: #f472b6;
+  --color-languages-soft: #fff0f7;
+
+  --radius-card: 1.25rem;
+  --radius-pill: 999px;
+
+  --animate-pop-in: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-float-up: float-up 0.6s ease-out forwards;
+  --animate-fill: fill-bar 0.8s ease-out forwards;
+
+  @keyframes pop-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.85) translateY(6px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes float-up {
+    0% {
+      opacity: 0;
+      transform: translateY(8px) scale(0.95);
+    }
+    15% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    85% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-14px) scale(1);
+    }
+  }
+
+  @keyframes fill-bar {
+    from {
+      width: 0%;
+    }
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-brand-light);
+    color: white;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 999px;
+    border: 2px solid var(--color-bg);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
