@@ -135,7 +135,7 @@ with spec as (
   join exam_boards b on b.id = seb.exam_board_id and b.slug = 'aqa'
 ),
 parent as (
-  select id from topics t, spec where t.subject_exam_board_id = spec.id and t.slug = 'bioenergetics'
+  select t.id from topics t, spec where t.subject_exam_board_id = spec.id and t.slug = 'bioenergetics'
 )
 insert into topics (subject_exam_board_id, parent_topic_id, slug, name, sort_order)
 select spec.id, parent.id, sub.slug, sub.name, sub.sort_order
