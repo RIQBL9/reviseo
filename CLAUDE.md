@@ -18,16 +18,27 @@ adding UI.
 
 - Next.js 16 (App Router, React Server Components by default)
 - React 19
-- TypeScript 7, strict mode
+- TypeScript 5.9, strict mode (pinned below 6/7 — see note)
 - Tailwind CSS v4 (CSS-first config — see `app/globals.css`, no `tailwind.config.ts`)
 - Supabase: Postgres + Auth + Row Level Security, via `@supabase/ssr`
 - Zod for input validation at every server boundary (forms, server actions)
 
-Versions are pinned in `package.json` to what was current when this project
-was scaffolded. This repo was built without a working `npm`/Node toolchain on
-the machine that authored it — **nothing has been run, installed, type-checked
-or built**. Treat the first `npm install && npm run typecheck && npm run build`
-as a real verification step, not a formality, and fix whatever it surfaces.
+Versions are pinned in `package.json`. `typescript` is deliberately pinned to
+5.9.3 rather than the `7.x` "latest" on npm (the new native/Go compiler) —
+`typescript-eslint` (a transitive dep of `eslint-config-next`) doesn't support
+TS 7 yet and hard-errors on it. Don't bump `typescript` past the 5.x line
+until `typescript-eslint` adds TS 7 support (there's no released stable 6.x
+line either, as of when this was checked). `eslint` is likewise pinned to the
+latest `9.x` (`9.39.5`), not `10.x` — `eslint-config-next@16.3.4`'s peer range
+is `eslint >=9.0.0` and its bundled `eslint-plugin-react` doesn't declare
+`10.x` support.
+
+`npm install && npm run typecheck && npm run lint && npm run build` all pass
+as of the last verification. If you bump any dependency, rerun all four
+before considering the change done — this stack sits close to the bleeding
+edge and has already hit two real ecosystem-lag issues (TS 7 above, and
+`eslint-config-next` shipping native flat configs — see the `eslint.config.mjs`
+note under "Conventions").
 
 ## Architecture
 
@@ -102,15 +113,21 @@ Rules for future work:
 
 ## Auth & route protection
 
-`middleware.ts` → `lib/supabase/middleware.ts` refreshes the Supabase session
-on every request and enforces:
+`proxy.ts` (Next 16 renamed the `middleware.ts` convention to `proxy.ts` —
+same file, same `matcher` config, exported function is just called `proxy`
+now instead of `middleware`) → `lib/supabase/middleware.ts` (kept that name
+since it's the Supabase-session-refresh logic itself, not the Next.js entry
+point) refreshes the Supabase session on every request and enforces:
 - signed-out users can only reach `PUBLIC_PATHS` (landing, auth pages, `/auth/*`)
 - signed-in users who haven't finished onboarding are redirected to `/onboarding`
-- signed-in, onboarded users are redirected away from auth/onboarding screens
+- signed-in, onboarded users are redirected away from `/login`, `/signup`,
+  `/forgot-password` and `/onboarding` — but **not** `/reset-password`, which
+  a signed-in user must still be able to reach right after clicking a
+  password-recovery email link.
 
 `app/(app)/layout.tsx` also does its own `auth.getUser()` + redirect as a
 second line of defense for that route group — don't remove it just because
-middleware already checks.
+the proxy already checks.
 
 ## XP, streaks & mastery — the anti-gaming rules
 
@@ -174,6 +191,22 @@ those rather than restyling raw HTML elements.
 - Don't hard-code subject/topic/question content in components — it belongs
   in the database (seed data is clearly separated in `supabase/seed.sql` and
   explicitly marked as unverified placeholder content, not real spec content).
+- `eslint.config.mjs` imports `eslint-config-next/core-web-vitals` and
+  `eslint-config-next/typescript` directly (both export a flat `Linter.Config[]`
+  as of `eslint-config-next@16.3.4`) rather than going through the legacy
+  `FlatCompat` + `compat.extends("next/core-web-vitals", ...)` shim from older
+  Next.js templates — that shim chokes on this version's config with a
+  circular-JSON error. If a future `create-next-app` template goes back to
+  suggesting `FlatCompat`, it's solving a problem this version of
+  `eslint-config-next` no longer has.
+- `eslint.config.mjs` also turns off `react-hooks/static-components` project-wide.
+  That rule flags `const Icon = getSubjectIcon(subject.icon); return <Icon />`
+  — a function call inside render returning a component used as JSX — as
+  potentially unstable. Here it's provably safe: `getSubjectIcon`/`getSubjectTheme`
+  are plain lookups into a static, module-level `Record` (`lib/icon-map.ts`,
+  `lib/subjects.ts`), never a factory creating a new component. This pattern
+  is used throughout `components/subjects/`, `components/dashboard/`, etc. —
+  keep using it rather than working around the rule per-call-site.
 
 ## What's scaffolded but intentionally not fully built (V1 scope)
 
@@ -207,9 +240,13 @@ npm run lint           # eslint
 npm run typecheck      # tsc --noEmit
 ```
 
-Since this project has never been installed/built, **the first task in any
-new session should be running all four** and fixing what breaks before
-building new features on top.
+All four (`typecheck`, `lint`, `build`, plus a manual click-through of
+landing → signup → login → route-protection in a browser) were run and
+passed as the last verification of this codebase. If Node isn't already on
+`PATH` in your environment, see `scripts/dev-with-local-node.sh` and
+`.claude/launch.json` for how a prior session ran it from a manually
+extracted Node binary — reuse or delete that setup as appropriate for
+whatever environment you're actually in.
 
 ## Environment variables
 
@@ -219,3 +256,13 @@ need the service role key for normal operation (all writes go through RLS as
 the authenticated user). Only add a service-role-key-dependent code path for
 genuine admin/seeding scripts, run server-side only, never imported into
 anything under `app/` that ships to the client.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

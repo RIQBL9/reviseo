@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "reviseo-dev",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["scripts/dev-with-local-node.sh"],
+      "port": 3000
+    }
+  ]
+}

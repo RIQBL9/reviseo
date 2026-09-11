@@ -59,7 +59,7 @@ export function FeatureGrid() {
             Everything you need to revise, nothing you don&apos;t
           </h2>
           <p className="mt-3 text-balance text-lg text-ink-muted">
-            A focused revision toolkit that adapts to your subjects, your exam boards and how you're actually doing.
+            A focused revision toolkit that adapts to your subjects, your exam boards and how you&apos;re actually doing.
           </p>
         </div>
 

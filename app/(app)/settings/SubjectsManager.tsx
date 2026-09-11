@@ -32,7 +32,6 @@ export function SubjectsManager({
   const [pending, startTransition] = useTransition();
   const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
 
-  const selectedIds = Object.keys(selections);
   const remainingSubjects = allSubjects.filter((s) => !selections[s.id]);
 
   function addSubject(subjectId: string) {
@@ -50,20 +49,23 @@ export function SubjectsManager({
   }
 
   function updateSelection(subjectId: string, patch: Partial<Selection>) {
-    setSelections((prev) => ({ ...prev, [subjectId]: { ...prev[subjectId], ...patch } }));
+    setSelections((prev) => {
+      const current = prev[subjectId] ?? { examBoardId: null, targetGrade: null };
+      return { ...prev, [subjectId]: { ...current, ...patch } };
+    });
     setStatus("idle");
   }
 
-  const canSave = selectedIds.every((id) => selections[id].examBoardId);
+  const canSave = Object.values(selections).every((s) => s.examBoardId);
 
   function handleSave() {
     const removedSubjectIds = [...originalIds].filter((id) => !selections[id]);
     startTransition(async () => {
       const result = await updateUserSubjectsAction({
-        subjects: selectedIds.map((subjectId) => ({
+        subjects: Object.entries(selections).map(([subjectId, selection]) => ({
           subjectId,
-          examBoardId: selections[subjectId].examBoardId!,
-          targetGrade: selections[subjectId].targetGrade,
+          examBoardId: selection.examBoardId!,
+          targetGrade: selection.targetGrade,
         })),
         removedSubjectIds,
       });
@@ -85,12 +87,11 @@ export function SubjectsManager({
       )}
 
       <div className="space-y-3">
-        {selectedIds.map((subjectId) => {
+        {Object.entries(selections).map(([subjectId, selection]) => {
           const subject = allSubjects.find((s) => s.id === subjectId);
           if (!subject) return null;
           const Icon = getSubjectIcon(subject.icon);
           const theme = getSubjectTheme(subject.color_theme);
-          const selection = selections[subjectId];
           const availableBoardIds = new Set(
             subjectExamBoards.filter((seb) => seb.subject_id === subjectId).map((seb) => seb.exam_board_id),
           );

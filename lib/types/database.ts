@@ -1,6 +1,11 @@
 // Hand-written types mirroring supabase/migrations/0001_init_schema.sql.
 // If the schema changes, update this file (and ideally later replace it with
 // `supabase gen types typescript` once the Supabase CLI is available).
+//
+// IMPORTANT: every table needs Row/Insert/Update/Relationships, and the
+// `public` schema needs Tables/Views/Functions/Enums/CompositeTypes — this
+// exact shape is what supabase-js's generics expect. Omitting any of it
+// makes every query silently resolve to `never` instead of a real error.
 
 export type YearGroup = "year_10" | "year_11";
 
@@ -24,7 +29,7 @@ export interface QuestionOption {
   text: string;
 }
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       profiles: {
@@ -48,6 +53,7 @@ export interface Database {
           id: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Row"]>;
+        Relationships: [];
       };
       subjects: {
         Row: {
@@ -62,6 +68,7 @@ export interface Database {
         };
         Insert: Partial<Database["public"]["Tables"]["subjects"]["Row"]>;
         Update: Partial<Database["public"]["Tables"]["subjects"]["Row"]>;
+        Relationships: [];
       };
       exam_boards: {
         Row: {
@@ -72,6 +79,7 @@ export interface Database {
         };
         Insert: Partial<Database["public"]["Tables"]["exam_boards"]["Row"]>;
         Update: Partial<Database["public"]["Tables"]["exam_boards"]["Row"]>;
+        Relationships: [];
       };
       subject_exam_boards: {
         Row: {
@@ -84,6 +92,7 @@ export interface Database {
         };
         Insert: Partial<Database["public"]["Tables"]["subject_exam_boards"]["Row"]>;
         Update: Partial<Database["public"]["Tables"]["subject_exam_boards"]["Row"]>;
+        Relationships: [];
       };
       topics: {
         Row: {
@@ -98,6 +107,7 @@ export interface Database {
         };
         Insert: Partial<Database["public"]["Tables"]["topics"]["Row"]>;
         Update: Partial<Database["public"]["Tables"]["topics"]["Row"]>;
+        Relationships: [];
       };
       flashcards: {
         Row: {
@@ -110,6 +120,7 @@ export interface Database {
         };
         Insert: Partial<Database["public"]["Tables"]["flashcards"]["Row"]>;
         Update: Partial<Database["public"]["Tables"]["flashcards"]["Row"]>;
+        Relationships: [];
       };
       questions: {
         Row: {
@@ -125,6 +136,7 @@ export interface Database {
         };
         Insert: Partial<Database["public"]["Tables"]["questions"]["Row"]>;
         Update: Partial<Database["public"]["Tables"]["questions"]["Row"]>;
+        Relationships: [];
       };
       user_subjects: {
         Row: {
@@ -142,6 +154,7 @@ export interface Database {
           exam_board_id: string;
         };
         Update: Partial<Database["public"]["Tables"]["user_subjects"]["Row"]>;
+        Relationships: [];
       };
       user_topic_progress: {
         Row: {
@@ -161,6 +174,7 @@ export interface Database {
           topic_id: string;
         };
         Update: Partial<Database["public"]["Tables"]["user_topic_progress"]["Row"]>;
+        Relationships: [];
       };
       revision_sessions: {
         Row: {
@@ -181,6 +195,7 @@ export interface Database {
           activity_type: RevisionActivityType;
         };
         Update: Partial<Database["public"]["Tables"]["revision_sessions"]["Row"]>;
+        Relationships: [];
       };
       quiz_attempts: {
         Row: {
@@ -198,6 +213,7 @@ export interface Database {
           revision_session_id: string;
         };
         Update: Partial<Database["public"]["Tables"]["quiz_attempts"]["Row"]>;
+        Relationships: [];
       };
       quiz_answers: {
         Row: {
@@ -213,6 +229,7 @@ export interface Database {
           question_id: string;
         };
         Update: Partial<Database["public"]["Tables"]["quiz_answers"]["Row"]>;
+        Relationships: [];
       };
       flashcard_reviews: {
         Row: {
@@ -229,6 +246,7 @@ export interface Database {
           confidence: FlashcardConfidence;
         };
         Update: Partial<Database["public"]["Tables"]["flashcard_reviews"]["Row"]>;
+        Relationships: [];
       };
       xp_events: {
         Row: {
@@ -245,6 +263,7 @@ export interface Database {
           reason: string;
         };
         Update: Partial<Database["public"]["Tables"]["xp_events"]["Row"]>;
+        Relationships: [];
       };
       user_achievements: {
         Row: {
@@ -258,6 +277,7 @@ export interface Database {
           achievement_key: string;
         };
         Update: Partial<Database["public"]["Tables"]["user_achievements"]["Row"]>;
+        Relationships: [];
       };
       friendships: {
         Row: {
@@ -273,10 +293,22 @@ export interface Database {
           addressee_id: string;
         };
         Update: Partial<Database["public"]["Tables"]["friendships"]["Row"]>;
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: {
+      year_group: YearGroup;
+      mastery_level: MasteryLevel;
+      question_type: QuestionType;
+      revision_activity_type: RevisionActivityType;
+      friendship_status: FriendshipStatus;
+      flashcard_confidence: FlashcardConfidence;
+    };
+    CompositeTypes: Record<string, never>;
   };
-}
+};
 
 export type Tables<T extends keyof Database["public"]["Tables"]> =
   Database["public"]["Tables"][T]["Row"];

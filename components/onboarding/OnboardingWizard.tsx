@@ -63,9 +63,11 @@ export function OnboardingWizard({
     startTransition(async () => {
       const result = await completeOnboardingAction({
         yearGroup,
+        // boardSelection[s.id] is guaranteed set here — step 3's "Continue"
+        // (canAdvance) can't be passed until every selected subject has one.
         subjects: selectedSubjects.map((s) => ({
           subjectId: s.id,
-          examBoardId: boardSelection[s.id],
+          examBoardId: boardSelection[s.id]!,
           targetGrade: grades[s.id] ?? null,
         })),
       });

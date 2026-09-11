@@ -42,6 +42,7 @@ export function FlashcardSession({
   const card = cards[index];
 
   function handleConfidence(confidence: FlashcardConfidence) {
+    if (!card) return;
     const nextReviews = [...reviews, { flashcardId: card.id, confidence }];
 
     if (index + 1 < cards.length) {

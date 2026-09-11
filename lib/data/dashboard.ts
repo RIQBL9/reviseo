@@ -122,8 +122,9 @@ export async function getDashboardData(
     .sort((a, b) => new Date(b.last_revised_at ?? 0).getTime() - new Date(a.last_revised_at ?? 0).getTime());
 
   let continueRevising: DashboardTopicHighlight | null = null;
-  if (inProgress[0]) {
-    const match = highlights.find((h) => h.topic.id === inProgress[0].topic_id);
+  const mostRecentInProgress = inProgress[0];
+  if (mostRecentInProgress) {
+    const match = highlights.find((h) => h.topic.id === mostRecentInProgress.topic_id);
     if (match) continueRevising = match;
   }
   if (!continueRevising) {

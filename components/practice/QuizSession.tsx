@@ -50,6 +50,7 @@ export function QuizSession({
   }
 
   function handleNext() {
+    if (!question) return;
     const isCorrect = selected.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase();
     const nextAnswers = [...answers, { questionId: question.id, userAnswer: selected, isCorrect }];
 
