@@ -49,7 +49,7 @@ export async function signUpAction(
   const supabase = await createClient();
   const origin = await getOrigin();
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
@@ -65,7 +65,10 @@ export async function signUpAction(
     return { error: "We couldn't create your account. Please try again." };
   }
 
-  redirect("/signup/check-email");
+  // If email confirmation is disabled on the Supabase project, signUp()
+  // returns an active session immediately — skip straight to onboarding
+  // rather than telling the student to check an email that won't arrive.
+  redirect(data.session ? "/onboarding" : "/signup/check-email");
 }
 
 export async function loginAction(

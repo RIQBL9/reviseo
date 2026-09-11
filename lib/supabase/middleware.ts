@@ -53,7 +53,10 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (user) {
-    const isAuthPage = ["/login", "/signup", "/forgot-password", "/reset-password"].includes(pathname);
+    // Deliberately excludes /reset-password — reaching it requires being
+    // authenticated via a Supabase recovery link, so a signed-in user must
+    // still be able to load it to actually set a new password.
+    const isAuthPage = ["/login", "/signup", "/forgot-password"].includes(pathname);
 
     if (isAuthPage) {
       const url = request.nextUrl.clone();
